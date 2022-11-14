@@ -11,20 +11,18 @@ function Categories() {
     "Острые",
     "Закрытые",
   ];
-  const handleOnClickActive = (a) => {
-    setActive(a);
-  };
 
   return (
     <div className="categories">
       <ul>
-        {categories.map((el, index) => {
+        {categories.map((value, index) => {
           return (
             <li
-              onClick={() => handleOnClickActive(index)}
+              key={index}
+              onClick={() => setActive(index)}
               className={active === index ? "active" : ""}
             >
-              {el}
+              {value}
             </li>
           );
         })}
