@@ -1,0 +1,35 @@
+.search {
+  position: relative;
+  margin-left: -220px;
+  &__Icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 17px;
+    left: 10px;
+    transition: all 0.1s ease-in-out;
+    opacity: 0.5;
+  }
+  &__Input {
+    padding: 15px 20px 15px 35px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    font-size: 16px;
+    width: 400px;
+    &:focus {
+      border: 1px solid rgba(0, 0, 0, 0.3);
+    }
+  }
+  &__ClearIcon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 15px;
+    top: 16px;
+    opacity: 0.5;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

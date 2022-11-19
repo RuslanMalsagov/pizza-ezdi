@@ -1,0 +1,35 @@
+@import "../../scss/_variables";
+
+.pagination {
+  &__Paginate {
+    display: flex;
+    justify-content: center;
+    :global {
+      .selected {
+        a {
+          background-color: $orange;
+          color: #fff;
+        }
+      }
+    }
+    li {
+      a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid $orange;
+        border-radius: 50%;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+        color: $orange;
+        &:hover {
+          background-color: $orange;
+          border-radius: 50%;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
