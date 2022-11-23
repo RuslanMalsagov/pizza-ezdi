@@ -1,3 +1,4 @@
+import axios from "axios";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import React, { useEffect, useState } from "react";
 import Categories from "../components/Categories";
@@ -34,14 +35,22 @@ const Main = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(
-      `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
-    )
+    // fetch(
+    //   `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
+    // )
+    //   .then((res) => {
+    //     return res.json();
+    //   })
+    //   .then((data) => {
+    //     setItem(data);
+    //     setIsLoading(false);
+    //   });
+    axios
+      .get(
+        `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
+      )
       .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setItem(data);
+        setItem(res.data);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
