@@ -8,14 +8,15 @@ import Pagination from "../components/Pagination";
 import { useContext } from "react";
 import { SearchContext } from "../App";
 import { useDispatch, useSelector } from "react-redux";
-import { setCategoryId } from "../redux/slices/filterSlice";
+import { setCategoryId, setCurrentPage } from "../redux/slices/filterSlice";
 
 const Main = () => {
   const dispatch = useDispatch();
   const { search } = useContext(SearchContext);
-  const { categoryId, sort } = useSelector((state) => state.filter);
+  const { categoryId, sort, currentPage } = useSelector(
+    (state) => state.filter
+  );
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [item, setItem] = useState([]);
 
@@ -33,18 +34,12 @@ const Main = () => {
     return false;
   });
 
+  const setCurrent = (number) => {
+    dispatch(setCurrentPage(number));
+  };
+
   useEffect(() => {
     setIsLoading(true);
-    // fetch(
-    //   `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
-    // )
-    //   .then((res) => {
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     setItem(data);
-    //     setIsLoading(false);
-    //   });
     axios
       .get(
         `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
@@ -73,7 +68,10 @@ const Main = () => {
               return <PizzaBlock key={el.id} {...el} />;
             })}
       </div>
-      <Pagination setCurrentPage={(number) => setCurrentPage(number)} />
+      <Pagination
+        value={currentPage}
+        setCurrent={(number) => setCurrent(number)}
+      />
     </div>
   );
 };
