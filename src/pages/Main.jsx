@@ -16,17 +16,18 @@ import { useContext } from "react";
 import axios from "axios";
 import qs from "qs";
 import { useRef } from "react";
-import { setItems } from "../redux/slices/pizzaSlice";
+import { getPizza, setItems } from "../redux/slices/pizzaSlice";
 
 const Main = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { search } = useContext(SearchContext);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
-  const items = useSelector((state) => state.pizza.items);
+
+  const {items, isLoading} = useSelector((state) => state.pizza.items);
 
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filter
@@ -41,7 +42,7 @@ const Main = () => {
   const order = sort.sortProperty.includes("-") ? "asc" : "desc";
   const searchValue = search ? `&search=${search}` : "";
 
-  const pizza = items.filter((el) => {
+  const pizza = items && items.filter((el) => {
     if (el.name.toLowerCase().includes(search.toLowerCase())) return true;
     return false;
   });
@@ -50,19 +51,19 @@ const Main = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchPizzas = async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get(
-        `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=8&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
-      );
-      dispatch(setItems(data));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchPizzas = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const { data } = await axios.get(
+  //       `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=8&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
+  //     );
+  //     dispatch(setItems(data));
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (window.location.search) {
@@ -80,7 +81,7 @@ const Main = () => {
 
   useEffect(() => {
     if (!isSearch.current) {
-      fetchPizzas();
+      dispatch(getPizza({ category, sortBy, order, searchValue, currentPage }));
     }
     isSearch.current = false;
     window.scrollTo(0, 0);
