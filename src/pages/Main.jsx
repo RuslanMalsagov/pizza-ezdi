@@ -1,4 +1,5 @@
 import {
+  selectFilter,
   setCategoryId,
   setCurrentPage,
   setFilters,
@@ -16,22 +17,23 @@ import { useContext } from "react";
 import axios from "axios";
 import qs from "qs";
 import { useRef } from "react";
-import { getPizza, setItems } from "../redux/slices/pizzaSlice";
+import {
+  getPizza,
+  selectPizzaData,
+  setItems,
+} from "../redux/slices/pizzaSlice";
 
 const Main = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { search } = useContext(SearchContext);
   // const [isLoading, setIsLoading] = useState(true);
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
+  const { items, isLoading } = useSelector(selectPizzaData);
 
-  const {items, isLoading} = useSelector((state) => state.pizza.items);
-
-  const { categoryId, sort, currentPage } = useSelector(
-    (state) => state.filter
-  );
+  const { categoryId, sort, currentPage, search } =
+    useSelector(selectFilter);
 
   const setCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -42,10 +44,13 @@ const Main = () => {
   const order = sort.sortProperty.includes("-") ? "asc" : "desc";
   const searchValue = search ? `&search=${search}` : "";
 
-  const pizza = items && items.filter((el) => {
-    if (el.name.toLowerCase().includes(search.toLowerCase())) return true;
-    return false;
-  });
+  console.log(items);
+  const pizza =
+    items &&
+    items.filter((el) => {
+      if (el.name.toLowerCase().includes(search.toLowerCase())) return true;
+      return false;
+    });
 
   const setCurrent = (number) => {
     dispatch(setCurrentPage(number));

@@ -9,14 +9,14 @@ const initialState = {
 
 export const getPizza = createAsyncThunk(
   "getPizza",
-  async ({ category, sortBy, order, searchValue, currentPage }, thunkAPI) => {
+  async ({ category, sortBy, order, searchValue, currentPage }, thunkApi) => {
     try {
       const { data } = await axios.get(
         `https://63734e9a348e947299088973.mockapi.io/items?&page=${currentPage}&limit=8&${category}&sortBy=${sortBy}&order=${order}${searchValue}`
       );
       return data;
     } catch (error) {
-      thunkAPI.rejectWithValue(console.log(error));
+      thunkApi.rejectWithValue(console.log(error));
     }
   }
 );
@@ -32,7 +32,6 @@ const pizzaSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getPizza.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.items = action.payload;
         state.isLoading = false;
       })
@@ -45,6 +44,8 @@ const pizzaSlice = createSlice({
       });
   },
 });
+
+export const selectPizzaData = (state) => state.pizza
 
 export const { setItems } = pizzaSlice.actions;
 export default pizzaSlice.reducer;

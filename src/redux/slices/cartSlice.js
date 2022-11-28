@@ -42,6 +42,17 @@ const cartSlice = createSlice({
   },
 });
 
-export const { itemInc, itemDec, removeProduct, addProduct, clearCart} =
+// selectCart селектор, та же JS функция.
+export const selectCart = (state) => state.cart;
+
+/*
+selectCertItemById - функция принимает параметр id который
+она будет использовать в следующей функции и там уже
+будет производить сравнение
+ */
+export const selectCertItemById = (id) => (state) =>
+  state.cart.items.find((obj) => obj.id === id);
+
+export const { itemInc, itemDec, removeProduct, addProduct, clearCart } =
   cartSlice.actions;
 export default cartSlice.reducer;
