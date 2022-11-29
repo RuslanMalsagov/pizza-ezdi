@@ -1,6 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { TItemInc } from "../../pages/CartItem";
+import { RootState } from "../store";
 
-const initialState = {
+export type TCartItem = {
+  id: number;
+  type: string;
+  name: string;
+  size: number;
+  price: number;
+  imageUrl: string;
+  count: number;
+};
+
+interface ICartSliceState {
+  totalPrice: number;
+  items: TCartItem[];
+}
+
+const initialState: ICartSliceState = {
   totalPrice: 0,
   items: [],
 };
@@ -9,7 +26,7 @@ const cartSlice = createSlice({
   name: "cartSlice",
   initialState,
   reducers: {
-    addProduct(state, action) {
+    addProduct(state, action: PayloadAction<TCartItem>) {
       const findItem = state.items.find((el) => el.id === action.payload.id);
       if (findItem) {
         findItem.count++;
@@ -20,18 +37,22 @@ const cartSlice = createSlice({
         return item.price * item.count + sum;
       }, 0);
     },
-    itemInc(state, action) {
+    itemInc(state, action: PayloadAction<TItemInc>) {
       const findItem = state.items.find((el) => el.id === action.payload.id);
-      findItem.count++;
+      if (findItem) {
+        findItem.count++;
+      }
       state.totalPrice = state.items.reduce((sum, item) => {
         return item.price * item.count + sum;
       }, 0);
     },
-    itemDec(state, action) {
+    itemDec(state, action: PayloadAction<number>) {
       const findItem = state.items.find((el) => el.id === action.payload);
-      findItem.count--;
+      if (findItem) {
+        findItem.count--;
+      }
     },
-    removeProduct(state, action) {
+    removeProduct(state, action: PayloadAction<number>) {
       state.items = state.items.filter((item) => item.id !== action.payload);
       state.totalPrice = state.items.reduce((sum, item) => sum + item.price, 0);
     },
@@ -43,14 +64,14 @@ const cartSlice = createSlice({
 });
 
 // selectCart селектор, та же JS функция.
-export const selectCart = (state) => state.cart;
+export const selectCart = (state: RootState) => state.cart;
 
 /*
 selectCertItemById - функция принимает параметр id который
 она будет использовать в следующей функции и там уже
 будет производить сравнение
  */
-export const selectCertItemById = (id) => (state) =>
+export const selectCertItemById = (id: number) => (state: RootState) =>
   state.cart.items.find((obj) => obj.id === id);
 
 export const { itemInc, itemDec, removeProduct, addProduct, clearCart } =

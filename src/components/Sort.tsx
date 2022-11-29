@@ -1,42 +1,58 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectSort, setSortProperty } from "../redux/slices/filterSlice";
+import { useSelector } from "react-redux";
+import {
+  selectSort,
+  setSortProperty,
+  SortPropertyEnum,
+} from "../redux/slices/filterSlice";
+import { useAppDispatch } from "../redux/store";
 
-export const list = [
-  { name: "популярности (DESC)", sortProperty: "rating" },
-  { name: "популярности (ASC)", sortProperty: "-rating" },
-  { name: "цене (DESC)", sortProperty: "price" },
-  { name: "цене (ASC)", sortProperty: "-price" },
-  { name: "алфавиту (DESC)", sortProperty: "title" },
-  { name: "алфавиту (ASC)", sortProperty: "-title" },
+type SortItem = {
+  name: string;
+  sortProperty: SortPropertyEnum;
+};
+
+export const list: SortItem[] = [
+  { name: "популярности (DESC)", sortProperty: SortPropertyEnum.RATING_DESC },
+  { name: "популярности (ASC)", sortProperty: SortPropertyEnum.RATING_ASC },
+  { name: "цене (DESC)", sortProperty: SortPropertyEnum.PRICE_DESC },
+  { name: "цене (ASC)", sortProperty: SortPropertyEnum.PRICE_ASC },
+  { name: "алфавиту (DESC)", sortProperty: SortPropertyEnum.TITLE_DESC },
+  { name: "алфавиту (ASC)", sortProperty: SortPropertyEnum.TITLE_ASC },
 ];
 
 function Sort() {
   const [sortOpened, setSortOpened] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   //selectSort - селектор
   const sort = useSelector(selectSort);
-  const sortRef = useRef();
+  const sortRef = useRef<HTMLDivElement>(null);
 
-  const handleActiveSort = (obj) => {
+  const handleActiveSort = (obj: SortItem) => {
     dispatch(setSortProperty(obj));
     setSortOpened((sortOpened) => !sortOpened);
   };
 
   useEffect(() => {
-    const handleCloseSort = (event) => {
-      if (!event.path.includes(sortRef.current)) {
+    const handleCloseSort = (event: MouseEvent) => {
+      // event или MouseEvent по умолчанию не содержит path
+      // поэтому таким способом создаем два eventa
+      // _event для TS
+      const _event = event as MouseEvent & {
+        path: Node[];
+      };
+      if (sortRef.current && !_event.path.includes(sortRef.current)) {
         setSortOpened(false);
       }
     };
-    document.body.addEventListener("click", handleCloseSort);
+    document.body.addEventListener<"click">("click", handleCloseSort);
     return () => {
       document.body.removeEventListener("click", handleCloseSort);
     };
   }, []);
-  
+
   return (
     <div ref={sortRef} className="sort">
       <div className="sort__label">

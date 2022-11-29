@@ -1,6 +1,16 @@
 import React from "react";
+import useWhyDidYouUpdate from 'ahooks/lib/useWhyDidYouUpdate'
 
-function Categories({ categoryId, onClickCategory }) {
+type CategoriesProps = {
+  categoryId: number;
+  onClickCategory: (index: number) => void;
+};
+
+const Categories: React.FC<CategoriesProps> = ({
+  categoryId,
+  onClickCategory,
+}) => {
+  useWhyDidYouUpdate()
   const categories = [
     "Все",
     "Мясные",
@@ -27,6 +37,6 @@ function Categories({ categoryId, onClickCategory }) {
       </ul>
     </div>
   );
-}
+};
 
 export default Categories;

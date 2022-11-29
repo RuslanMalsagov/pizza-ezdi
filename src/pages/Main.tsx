@@ -5,26 +5,24 @@ import {
   setFilters,
 } from "../redux/slices/filterSlice";
 import Skeleton from "../components/PizzaBlock/Skeleton";
-import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
 import Categories from "../components/Categories";
 import PizzaBlock from "../components/PizzaBlock";
 import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
-import { SearchContext } from "../App";
 import Sort, { list } from "../components/Sort";
-import { useContext } from "react";
-import axios from "axios";
 import qs from "qs";
 import { useRef } from "react";
 import {
   getPizza,
   selectPizzaData,
-  setItems,
+  TSearchPizzaParams,
 } from "../redux/slices/pizzaSlice";
+import { useAppDispatch } from "../redux/store";
 
-const Main = () => {
-  const dispatch = useDispatch();
+const Main: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   // const [isLoading, setIsLoading] = useState(true);
   const isSearch = useRef(false);
@@ -32,10 +30,9 @@ const Main = () => {
 
   const { items, isLoading } = useSelector(selectPizzaData);
 
-  const { categoryId, sort, currentPage, search } =
-    useSelector(selectFilter);
+  const { categoryId, sort, currentPage, search } = useSelector(selectFilter);
 
-  const setCategory = (id) => {
+  const setCategory = (id: number) => {
     dispatch(setCategoryId(id));
   };
 
@@ -44,15 +41,14 @@ const Main = () => {
   const order = sort.sortProperty.includes("-") ? "asc" : "desc";
   const searchValue = search ? `&search=${search}` : "";
 
-  console.log(items);
   const pizza =
     items &&
-    items.filter((el) => {
+    items.filter((el: any) => {
       if (el.name.toLowerCase().includes(search.toLowerCase())) return true;
       return false;
     });
 
-  const setCurrent = (number) => {
+  const setCurrent = (number: number) => {
     dispatch(setCurrentPage(number));
   };
 
@@ -72,11 +68,17 @@ const Main = () => {
 
   useEffect(() => {
     if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      const sort = list.find((obj) => obj.sortProperty === params.sortProperty);
+      const params = qs.parse(
+        window.location.search.substring(1)
+      ) as unknown as TSearchPizzaParams;
+      console.log(params);
+      const sortBy = list.find((obj) => obj.sortProperty === params.sortBy);
+      console.log("sort", sortBy);
       dispatch(
         setFilters({
-          ...params,
+          categoryId: Number(params.category),
+          search: params.searchValue,
+          currentPage: Number(params.currentPage),
           sort,
         })
       );
@@ -86,7 +88,15 @@ const Main = () => {
 
   useEffect(() => {
     if (!isSearch.current) {
-      dispatch(getPizza({ category, sortBy, order, searchValue, currentPage }));
+      dispatch(
+        getPizza({
+          category,
+          sortBy,
+          order,
+          searchValue,
+          currentPage: String(currentPage),
+        })
+      );
     }
     isSearch.current = false;
     window.scrollTo(0, 0);
@@ -112,7 +122,7 @@ const Main = () => {
       <div className="content__top">
         <Categories
           categoryId={categoryId}
-          onClickCategory={(index) => setCategory(index)}
+          onClickCategory={(index: number) => setCategory(index)}
         />
         <Sort />
       </div>
@@ -120,13 +130,13 @@ const Main = () => {
       <div className="content__items">
         {isLoading
           ? [...new Array(8)].map((_, index) => <Skeleton key={index} />)
-          : pizza.map((el) => {
+          : pizza.map((el: any) => {
               return <PizzaBlock key={el.id} {...el} />;
             })}
       </div>
       <Pagination
         value={currentPage}
-        setCurrent={(number) => setCurrent(number)}
+        setCurrent={(number: number) => setCurrent(number)}
       />
     </div>
   );
