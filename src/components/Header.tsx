@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import logoSvg from "../assets/img/pizza-logo.svg";
@@ -8,11 +8,20 @@ import Search from "./Search";
 function Header() {
   // selectCart селектор, та же JS функция.
   const { items, totalPrice } = useSelector(selectCart);
+  const isMounted = useRef(false);
 
   const totalCount = items.reduce(
     (sum: number, item: any) => sum + item.count,
     0
   );
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const json = JSON.stringify(items);
+      localStorage.setItem("cart", json);
+    }
+    isMounted.current = true;
+  }, [items]);
 
   return (
     <div className="header">

@@ -10,7 +10,7 @@ export enum SortPropertyEnum {
   PRICE_ASC = "-price",
 }
 
-type TSort = {
+export type TSort = {
   name: string;
   sortProperty: SortPropertyEnum;
 };
@@ -49,7 +49,6 @@ const filterSlice = createSlice({
       state.currentPage = action.payload;
     },
     setFilters(state, action: PayloadAction<IFilterSliceState>) {
-      console.log(action.payload);
       state.sort = action.payload.sort;
       state.categoryId = Number(action.payload.categoryId);
       state.currentPage = Number(action.payload.currentPage);

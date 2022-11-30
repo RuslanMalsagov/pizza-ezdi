@@ -6,14 +6,13 @@ import {
 } from "../redux/slices/filterSlice";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import { useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import Categories from "../components/Categories";
 import PizzaBlock from "../components/PizzaBlock";
 import Pagination from "../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import Sort, { list } from "../components/Sort";
 import qs from "qs";
-import { useRef } from "react";
 import {
   getPizza,
   selectPizzaData,
@@ -32,9 +31,9 @@ const Main: React.FC = () => {
 
   const { categoryId, sort, currentPage, search } = useSelector(selectFilter);
 
-  const setCategory = (id: number) => {
+  const setCategory = useCallback((id: number) => {
     dispatch(setCategoryId(id));
-  };
+  }, []);
 
   const category = categoryId > 0 ? `category=${categoryId}` : "";
   const sortBy = sort.sortProperty.replace("-", "");
@@ -71,9 +70,7 @@ const Main: React.FC = () => {
       const params = qs.parse(
         window.location.search.substring(1)
       ) as unknown as TSearchPizzaParams;
-      console.log(params);
       const sortBy = list.find((obj) => obj.sortProperty === params.sortBy);
-      console.log("sort", sortBy);
       dispatch(
         setFilters({
           categoryId: Number(params.category),
@@ -124,7 +121,7 @@ const Main: React.FC = () => {
           categoryId={categoryId}
           onClickCategory={(index: number) => setCategory(index)}
         />
-        <Sort />
+        <Sort value={sort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
