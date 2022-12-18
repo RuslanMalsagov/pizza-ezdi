@@ -23,7 +23,6 @@ import { useAppDispatch } from "../redux/store";
 const Main: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // const [isLoading, setIsLoading] = useState(true);
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
